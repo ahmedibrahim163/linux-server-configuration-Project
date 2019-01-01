@@ -46,6 +46,8 @@ You will take a baseline installation of a Linux server and prepare it to host y
    * Add the following lines and save.
       `# User rules for grader`
       `grader ALL=(ALL) NOPASSWD:ALL`
+   
+      `password : admin` 
  
  * Setup grader to login with an SSH key.
     Generate RSA key for grader on physical machine (not remote server).
@@ -75,7 +77,7 @@ You will take a baseline installation of a Linux server and prepare it to host y
     Under the 'Instances' tab, click the 3-dot menu icon, and select 'Manage'.
     Under the 'Networking' tab, go to the 'Firewall' settings.
     Click '+ Add another' and 'Save' after making the following rule:
-    Custom TCP 2200
+    `Custom TCP 2200`
  
    * Enable Port 2200 SSH access on the linux server.
     `$ sudo vim /etc/ssh/sshd_config`
@@ -105,8 +107,14 @@ You will take a baseline installation of a Linux server and prepare it to host y
     `$ sudo ufw allow www`
     `$ sudo ufw allow ntp`
     `$ sudo ufw enable` 
-
-
+ 
+ # Reboot the linux server for the Uncomplicated Firewall to update.
+  * Login to Amazon Lightsail account.
+  * Under the 'Instances' tab, click the 3-dot menu icon, and select 'Manage'.
+  * Click the 'Reboot' button.
+ 
+ # Configure the local timezone to UTC 
+ * Run`sudo dpkg-reconfigure tzdata` and then choose UTC
  * Install Apache
     `sudo apt-get install apache2`
  * Install mod_wsgi
@@ -118,11 +126,12 @@ You will take a baseline installation of a Linux server and prepare it to host y
 
 # Clone the Catalog app from Github
  * `sudo mkdir catalog`
- * Change owner of the newly created catalog folder `sudo chown -R grader:grader catalog`
-  `cd /catalog`
+ * Change owner of the newly created catalog folder 
+   `sudo chown -R grader:grader catalog`
+   `cd /catalog`
  * Clone your project from github `git clone https://github.com/ahmedibrahim163/catalog-item.git catalog`
 
-# Create a catalog.wsgi file, then add this inside:
+# Create a `catalog.wsgi` file, then add this inside:
     import sys
     import logging
     logging.basicConfig(stream=sys.stderr)
@@ -131,9 +140,8 @@ You will take a baseline installation of a Linux server and prepare it to host y
     from catalog import app as application
     application.secret_key = 'supersecretkey'
 
-# Rename application.py to init.py mv application.py __init__.py 
- #Install virtual environment
-
+ * Rename application.py to init.py `mv application.py __init__.py` 
+ ** Install virtual environment**
  * Install the virtual environment `sudo pip install virtualenv`
  * Create a new virtual environment with `sudo virtualenv venv`
  * Activate the virutal environment source `venv/bin/activate`
@@ -147,27 +155,27 @@ You will take a baseline installation of a Linux server and prepare it to host y
  * Change client_secrets.json path to `/var/www/catalog/catalog/client_secrets.json`
  * Configure and enable a new virtual host
  * Run this: `sudo nano /etc/apache2/sites-available/catalog.conf`
-    *Paste this code:*
-     <VirtualHost *:80>
-     ServerName 3.81.255.121
-     ServerAlias HOSTNAME catalogproject.com.3.81.255.121.xip.io/
-     ServerAdmin ahmad7fter@gmail.com
-     WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/venv/lib/python2.7/site-packages
-     WSGIProcessGroup catalog
-     WSGIScriptAlias / /var/www/catalog/catalog.wsgi
-     <Directory /var/www/catalog/catalog/>
-         Order allow,deny
-         Allow from all
-     </Directory>
-     Alias /static /var/www/catalog/catalog/static
-     <Directory /var/www/catalog/catalog/static/>
-         Order allow,deny
-         Allow from all
-     </Directory>
-     ErrorLog ${APACHE_LOG_DIR}/error.log
-     LogLevel warn
-     CustomLog ${APACHE_LOG_DIR}/access.log combined
-    </VirtualHost>
+     *Paste this code:*
+     `<VirtualHost *:80>`
+     `ServerName 3.81.255.121`
+     `ServerAlias HOSTNAME catalogproject.com.3.81.255.121.xip.io/`
+     `ServerAdmin ahmad7fter@gmail.com`
+     `WSGIDaemonProcess catalog python-path=/var/www/catalog:/var/www/catalog/venv/lib/python2.7/site-packages`
+     `WSGIProcessGroup catalog`
+     `WSGIScriptAlias / /var/www/catalog/catalog.wsgi`
+     `<Directory /var/www/catalog/catalog/>`
+         `Order allow,deny`
+         `Allow from all`
+     `</Directory>`
+     `Alias /static /var/www/catalog/catalog/static`
+     `<Directory /var/www/catalog/catalog/static/>`
+         `Order allow,deny`
+         `Allow from all`
+     `</Directory>`
+     `ErrorLog ${APACHE_LOG_DIR}/error.log`
+     `LogLevel warn`
+     `CustomLog ${APACHE_LOG_DIR}/access.log combined`
+    `</VirtualHost>`
 
  * Enable the virtual host `sudo a2ensite catalog`
 # Install and configure PostgreSQL
@@ -184,15 +192,23 @@ You will take a baseline installation of a Linux server and prepare it to host y
  * `\q`
  * `exit`
  
- * Change create engine line in your `__init__.py` and database_setup.py to: `engine = create_engine('postgresql://catalog:password@localhost/catalog')`
+ * Change create engine line in your `__init__.py` and database_setup.py to: `engine =     create_engine('postgresql://catalog:password@localhost/catalog')`
  * `python /var/www/catalog/catalog/database_setup.py`
 
 # Make sure no remote connections to the database are allowed. Check if the contents of this file 
  * `sudo nano /etc/postgresql/9.3/main/pg_hba.conf looks like this:`
- `local   all             postgres                                peer`
- `local   all             all                                     peer`
- `host    all             all             127.0.0.1/32            md5`
- `host    all             all             ::1/128                 md5`
+ `local`   `all`             `postgres`                                  `peer`
+ `local`   `all`             `all`                                       `peer`
+ `host`    `all`             `all`             `127.0.0.1/32`            `md5`
+ `host`    `all`             `all`             `::1/128`                 `md5`
+
+# The error log file.
+  `$ sudo less /var/log/apache2/error.log`
+
+# The access log file.
+  `$ sudo less /var/log/apache2/access.log`
 
 # Restart Apache
  * ` sudo service apache2 restart`
+
+# Visit site at `http://3.81.255.121`
