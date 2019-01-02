@@ -211,4 +211,24 @@ You will take a baseline installation of a Linux server and prepare it to host y
 # Restart Apache
  * ` sudo service apache2 restart`
 
-# Visit site at `http://3.81.255.121`
+# Visit site at `http://3.81.255.121
+
+# Resource:
+ https://help.ubuntu.com/
+ 
+ https://help.ubuntu.com/community/UbuntuTime
+ 
+ https://modwsgi.readthedocs.io/en/master/user-guides/configuration-guidelines.html
+ 
+ http://flask.pocoo.org/docs/1.0/deploying/mod_wsgi/
+ 
+ https://discussions.udacity.com/c/nd004-p7-linux-based-server-configuration
+ 
+ https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+ 
+ https://discussions.udacity.com/t/500-internal-server-error-and-mod-wsgi-warnings-in-error-logs/489043
+ 
+ https://docs.sqlalchemy.org/en/latest/core/engines.html
+ 
+ https://www.postgresql.org/docs/10/client-authentication.html
+
