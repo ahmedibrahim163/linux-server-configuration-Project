@@ -213,7 +213,7 @@ You will take a baseline installation of a Linux server and prepare it to host y
 
 # Visit site at `http://3.81.255.121
 
-# Resource:
+# Resources:
  https://help.ubuntu.com/
  
  https://help.ubuntu.com/community/UbuntuTime
